@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vedioor | الملف الشخصي</title>
+    <link rel="stylesheet" href="CSS/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+</head>
+
+<body>
+
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+        <div class="nav-content">
+            <a href="home.html" class="logo">
+                <span class="logo-text">فيديور</span>
+            </a>
+
+            <ul class="nav-links" id="navLinks">
+                <li><a href="home.html" class="nav-link">الرئيسية</a></li>
+                <li><a href="profile.html" class="nav-link">الملف الشخصي</a></li>
+
+                <li id="guest-nav-items">
+                    <div class="logo-btns" id="authBtns">
+                        <a id="loginBtn" class="auth-btn">تسجيل دخول</a>
+                        <a id="registerBtn" class="auth-btn">انشاء حساب</a>
+                    </div>
+                </li>
+
+                <li id="logged-nav-items" style="display: none;">
+                    <div id="logout-div" style="display: flex; align-items: center; gap: 12px;">
+                        <b id="nav-username" style="color: var(--primary);"></b>
+                        <img id="nav-user-image" src="profile-pics/default-avatar.png" alt="User Avatar" class="avatar"
+                            style="width: 36px; height: 36px;">
+                        <a id="logout-btn" onclick="logout()" class="auth-btn">خروج</a>
+                    </div>
+                </li>
+            </ul>
+
+            <button class="hamburger" id="hamburger" aria-label="Menu">
+                <span class="hamburger-icon">&#9776;</span>
+            </button>
+        </div>
+    </nav>
+
+    <main>
+        <div class="profile-header">
+            <img id="header-user-image" src="profile-pics/default-avatar.png" alt="Profile" class="profile-avatar">
+            <div class="profile-info">
+                <h1 id="header-name">اسم المستخدم</h1>
+                <span id="header-username">@username</span>
+                <div id="user-stats" style="display: flex; gap: 24px; margin-top: 16px;">
+                    <div>
+                        <span id="posts-count" style="color: var(--primary); font-weight: bold;">0</span>
+                        <p style="margin: 0; padding: 0; font-size: 0.8rem;">منشور</p>
+                    </div>
+                    <div>
+                        <span id="comments-count" style="color: var(--primary); font-weight: bold;">0</span>
+                        <p style="margin: 0; padding: 0; font-size: 0.8rem;">تعليق</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="post-container">
+            <h2 style="font-family: 'Space Grotesk', sans-serif; align-self: flex-start; margin-bottom: 20px;">منشوراتي
+            </h2>
+            <div id="user-posts" style="width: 100%;">
+                <!-- User posts will be injected here -->
+                <div class="loader" style="text-align: center; padding: 40px;">جاري تحميل منشوراتك...</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modals & Toasts (Mirrored from home.html for consistency) -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close closeLogin">&times;</span>
+            <h2>تسجيل دخول</h2>
+            <div class="inputs">
+                <input type="text" id="usernameInput" placeholder="اسم المستخدم">
+                <input type="password" id="passwordInput" placeholder="كلمة المرور">
+                <button onclick="loginBtnClicked()">دخول</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="reModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeRegister">&times;</span>
+            <h2>انشاء حساب</h2>
+            <div class="inputs">
+                <input type="text" id="nickNameInput" placeholder="الاسم المستعار">
+                <input type="text" id="usernameInputRegister" placeholder="اسم المستخدم">
+                <input type="password" id="passwordInputRegister" placeholder="كلمة المرور">
+                <input type="file" id="register-image-input">
+                <button onclick="registerBtnClicked()">انشاء</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="snackbar">أهلاً بك مجدداً!</div>
+    <div id="registerSnackbar">تم إنشاء الحساب بنجاح!</div>
+
+    <!-- Add Post Modal -->
+    <div id="postModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closePost">&times;</span>
+            <h2>وش في بالك؟</h2>
+            <div class="inputs">
+                <label for="post-title-input">العنوان</label>
+                <input type="text" id="post-title-input" placeholder="عنوان المنشور">
+
+                <label for="post-body-input">المحتوى</label>
+                <textarea id="post-body-input" rows="4" placeholder="اكتب موضوعك هنا..."></textarea>
+
+                <label for="post-image-input">صورة</label>
+                <input type="file" id="post-image-input">
+
+                <button onclick="createNewPostClicked()">انشر الـآن</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating FAB -->
+    <button class="floating-add-btn" aria-label="أضف منشور" id="add-btn" style="display: none;">
+        +
+    </button>
+
+    <script src="JS/main.js"></script>
+    <script>
+        // Profile specific logic
+        document.addEventListener("DOMContentLoaded", () => {
+            const user = getCurrentUser();
+            if (user) {
+                document.getElementById("header-name").innerText = user.name || user.username;
+                document.getElementById("header-username").innerText = `@${user.username}`;
+                document.getElementById("header-user-image").src = user.profile_image || "profile-pics/default-avatar.png";
+                document.getElementById("posts-count").innerText = user.posts_count || 0;
+                document.getElementById("comments-count").innerText = user.comments_count || 0;
+
+                // Fetch user posts
+                getUserPosts(user.id);
+            } else {
+                window.location.href = "home.html";
+            }
+        });
+
+        function getUserPosts(userId) {
+            axios.get(`${API_URL}/users/${userId}/posts`)
+                .then(response => {
+                    const posts = response.data.data;
+                    const container = document.getElementById("user-posts");
+                    container.innerHTML = "";
+
+                    if (posts.length === 0) {
+                        container.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--text-muted);">لا توجد منشورات بعد.</div>`;
+                        return;
+                    }
+
+                    posts.forEach(post => {
+                        let imageHeader = "";
+                        if (post.image && typeof post.image === "string" && post.image !== "") {
+                            imageHeader = `
+                                <div class="card-header">
+                                    <img src="${post.image}" alt="cover">
+                                    <h6>${post.created_at}</h6>
+                                </div>
+                            `;
+                        }
+
+                        const content = `
+                        <div class="square" onclick="postClicked(${post.id})" style="cursor: pointer; margin-bottom: 30px;">
+                            ${imageHeader}
+                            <div class="user-info">
+                                <img src="${post.author.profile_image}" alt="avatar" class="avatar" onerror="this.src='profile-pics/default-avatar.png'">
+                                <h3>${post.author.username}</h3>
+                            </div>
+                            <div class="h1">${post.title || ""}</div>
+                            <p>${post.body}</p>
+                            <div class="lowerPart">
+                                <div class="meta-left">
+                                    <svg class="comment-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-12.7 8.19 8.19 0 0 1 4.9 1.5L21 3z"></path>
+                                    </svg>
+                                    <span>${post.comments_count} تعليق</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                        container.innerHTML += content;
+                    });
+                })
+                .catch(error => alert("Error loading posts: " + error));
+        }
+    </script>
+</body>
+
+</html>

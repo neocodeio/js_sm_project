@@ -1,405 +1,195 @@
-// elements
-const hamburger = document.getElementById("hamburger");
-const navLinks = document.getElementById("navLinks"); // ul.nav-links
-const authBtns = document.getElementById("authBtns"); // div.logo-btns
-
-// function to move auth buttons into navLinks (mobile) or back (desktop)
-function adaptNavbar() {
-  const width = window.innerWidth;
-  if (width <= 768) {
-    // move auth buttons into navLinks if not already moved
-    if (navLinks && !navLinks.classList.contains("mobile")) {
-      // mark as mobile menu
-      navLinks.classList.add("mobile");
-      // clone auth buttons inside navLinks for mobile display
-      // remove duplicates first if any
-      const existingMobileAuth = navLinks.querySelector(".mobile-auth");
-      if (!existingMobileAuth) {
-        const mobileAuthWrap = document.createElement("div");
-        mobileAuthWrap.className = "mobile-auth";
-        // clone children of authBtns (Login / Register anchors)
-        const clones = Array.from((authBtns && authBtns.children) || []).map(
-          (node) => node.cloneNode(true)
-        );
-        clones.forEach((c) => {
-          // ensure style appropriate for mobile
-          c.classList.add("auth-btn");
-          mobileAuthWrap.appendChild(c);
-        });
-        // append a divider (optional)
-        const divider = document.createElement("hr");
-        divider.style.border = "none";
-        divider.style.height = "1px";
-        divider.style.background = "#eee";
-        divider.style.margin = "6px 0";
-        navLinks.appendChild(divider);
-        navLinks.appendChild(mobileAuthWrap);
-      }
-      // hide the desktop authBtns (already hidden by CSS, but keep safe)
-      if (authBtns) authBtns.style.display = "none";
-    }
-  } else {
-    // desktop: remove mobile markers and mobile-auth clones
-    if (navLinks && navLinks.classList.contains("mobile")) {
-      navLinks.classList.remove("mobile", "open");
-      // remove mobile-auth and divider
-      const mobileAuth = navLinks.querySelector(".mobile-auth");
-      const divider = navLinks.querySelector("hr");
-      if (mobileAuth) mobileAuth.remove();
-      if (divider) divider.remove();
-      if (authBtns) authBtns.style.display = "flex";
-      if (hamburger) hamburger.setAttribute("aria-expanded", "false");
-    }
-  }
-}
-
-// toggle menu open/close
-function toggleMenu() {
-  if (!navLinks || !hamburger) return;
-  const isOpen = navLinks.classList.contains("open");
-  if (isOpen) {
-    navLinks.classList.remove("open");
-    hamburger.setAttribute("aria-expanded", "false");
-  } else {
-    navLinks.classList.add("open");
-    hamburger.setAttribute("aria-expanded", "true");
-  }
-}
-
-// events
-if (hamburger) hamburger.addEventListener("click", toggleMenu);
-window.addEventListener("resize", adaptNavbar);
-
-// init on load
-document.addEventListener("DOMContentLoaded", () => {
-  adaptNavbar();
-  // optional: close menu if click outside
-  document.addEventListener("click", (e) => {
-    const target = e.target;
-    if (
-      navLinks &&
-      hamburger &&
-      !navLinks.contains(target) &&
-      !hamburger.contains(target) &&
-      navLinks.classList.contains("open")
-    ) {
-      navLinks.classList.remove("open");
-      hamburger.setAttribute("aria-expanded", "false");
-    }
-  });
-});
-
-
-//Login
-var modal = document.getElementById("myModal");
-// Get the button that opens the modal
-var loginBtn = document.getElementById("loginBtn");
-
-// Get the <span> element that closes the login modal (by class)
-var span = document.getElementsByClassName("closeLogin");
-
-// When the user clicks the button, open the modal
-if (loginBtn && modal) {
-  loginBtn.onclick = function () {
-    modal.style.display = "block";
-  };
-}
-
-// When the user clicks on <span> (x), close the modal
-if (span && modal) {
-  span.onclick = function () {
-    modal.style.display = "none";
-  };
-}
-
-
-//register
-var reModal = document.getElementById("reModal");
-// Get the button that opens the modal
-var registerBtn = document.getElementById("registerBtn");
-
-// Get the <span> element that closes the register modal (by id) - renamed to avoid clash
-var closeBtn = document.getElementById("closeRegister");
-
-// When the user clicks the button, open the register modal
-if (registerBtn && reModal) {
-  registerBtn.onclick = function () {
-    reModal.style.display = "block";
-  };
-}
-
-// When the user clicks on <span> (x) in register modal, close the modal
-if (closeBtn && reModal) {
-  closeBtn.onclick = function () {
-    reModal.style.display = "none";
-  };
-}
-
-// Combine window.onclick handling for both modals (was duplicated)
-window.onclick = function (event) {
-  if (event.target == modal && modal) {
-    modal.style.display = "none";
-  }
-  if (event.target == reModal && reModal) {
-    reModal.style.display = "none";
-  }
-};
-
 const API_URL = "https://tarmeezacademy.com/api/v1";
 
 const urlParams = new URLSearchParams(window.location.search);
-const id = urlParams.get("postId");
-console.log("Post id: ", id);
+const postId = urlParams.get("postId");
 
-function getPost() {
-  axios.get(`${API_URL}/posts/${id}`)
-  .then((response) => {
-  const post = response.data.data;  
-  const comments = post.comments;
-  const author = post.author;
-  
-  document.getElementById("username-span").innerHTML = author.username+"@";
-  
-  let postTitle = "";
-  if (post.title != null) {
-    postTitle = post.title;
-    }
-  
-  let commentsContent = ``;
-  for(comment of comments){
-    commentsContent += `
-    <div style="background-color: white; padding: 1px;" id="comments">
-    <div style="justify-content: flex-end; float: right; padding: 15px; margin: 10px;">
-      <img src="${comment.author.profile_image}" alt="" style="border-radius: 100px; width: 30px; height: 30px; vertical-align: middle; margin-left: 5px;">
-      <b style="vertical-align: middle;">${comment.author.username}</b>
-    </div><br>
-    <!-- comments body -->
-      <div style="margin-top: 25px; padding: 15px; text-align: left;">
-      ${comment.body}
-      </div>
-    <!--// comments body //-->
-    </div>
-    `;
+// DOM Elements
+const hamburger = document.getElementById("hamburger");
+const navLinks = document.getElementById("navLinks");
+const loginModal = document.getElementById("myModal");
+const registerModal = document.getElementById("reModal");
+
+// --- Nav & UI ---
+function setupUI() {
+  const token = localStorage.getItem("SM_Token");
+  const guestItems = document.getElementById("guest-nav-items");
+  const loggedItems = document.getElementById("logged-nav-items");
+  const navUsername = document.getElementById("nav-username");
+  const navUserImage = document.getElementById("nav-user-image");
+
+  if (token) {
+    if (guestItems) guestItems.style.display = "none";
+    if (loggedItems) loggedItems.style.display = "flex";
+
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+    if (navUsername) navUsername.innerText = user.username + "@";
+    if (navUserImage) navUserImage.src = user.profile_image || "profile-pics/default-avatar.png";
+  } else {
+    if (guestItems) guestItems.style.display = "flex";
+    if (loggedItems) loggedItems.style.display = "none";
   }
-    
-  const postContent = `
-    <div class="post-container">
-      <div id="posts">
-        <div class="square">
-          <div class="card-header">
-            <img src="${post.image}" alt="cover" onerror="this.src='profile-pics/No_image_available_500_x_500.svg.png'">
-            <h6>${post.created_at}</h6>
-          </div>
-
-          <div class="user-info">
-            <img src="${author.profile_image}" alt="user avatar" class="avatar">
-            <h3>${author.username}@</h3>
-          </div>
-
-          <div class="h1">${postTitle}</div>
-          <p>
-            ${post.body}
-          </p>
-
-          <div class="lowerPart">
-            <div class="meta-left">
-              <svg class="comment-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true" focusable="false">
-                <path d="M15.2141 5.98239L16.6158 4.58063C17.39 3.80646 18.6452 3.80646 19.4194 4.58063C20.1935 5.3548 20.1935 6.60998 19.4194 7.38415L18.0176 8.78591M15.2141 5.98239L6.98023 14.2163C5.93493 15.2616 5.41226 15.7842 5.05637 16.4211C4.70047 17.058 4.3424 18.5619 4 20C5.43809 19.6576 6.94199 19.2995 7.57889 18.9436C8.21579 18.5877 8.73844 18.0651 9.78375 17.0198L18.0176 8.78591M15.2141 5.98239L18.0176 8.78591" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                <path d="M11 20H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-              </svg>
-              <span class="comment-text">(${post.comments_count}) Comments</span>
-            </div>
-          </div>
-
-          <div id="comments">
-          <h2 style="text-align: right; margin-right: 20px; font-size: 20px; margin-top: 10px;">التعليقات:</h2>
-          ${commentsContent}
-          </div>
-
-        <!-- Add Comment -->
-        <div id="add-comment-div" style="padding: 10px;">
-        <input style="width: 90%; border-radius: 8px; border: none; padding: 5px;" id="comment-input" type="text" placeholder="اكتب تعليقك هنا..." />
-        <button type="button" style="border-radius: 12px; border: none; padding: 3px; font-size: 20px; background: #7857ff; color: white; margin: 10px; width: 80%;" onclick="createCommentClicked()">ارسل</button>
-        </div>
-        <!--// Add Comment //-->
-        </div>
-      </div>
-    </div>
-  `;
-    
-  document.getElementById("post").innerHTML = postContent;
-  })
-  .catch((error) => {
-  alert(error);
-});
-}
-getPost()
-
-function createCommentClicked() {
-  let commentBody = document.getElementById("comment-input").value;
-  let params = {
-    "body": commentBody
-  }
-  let token = localStorage.getItem("SM_Token");
-  let url = `${API_URL}/posts/${id}/comments`
-
-  axios
-    .post(url, params, {
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
-    })
-    .then((response) => {
-      console.log(response.data);
-      alert("تم ارسال التعليق")
-      getPost();
-    })
-    .catch((error) => {
-      alert(error.response.data.message);
-    });
 }
 
-// Login
-  function loginBtnClicked() {
-    const username = document.getElementById("usernameInput").value;
-    const password = document.getElementById("passwordInput").value;
-
-    const params = {
-      username: username,
-      password: password,
+function setupNav() {
+  if (hamburger) {
+    hamburger.onclick = () => {
+      const isOpen = navLinks.classList.toggle("open");
+      hamburger.innerHTML = isOpen ? "&#x2715;" : "&#x9776;";
     };
-
-    axios
-      .post(`${API_URL}/login`, params)
-      .then((response) => {
-        console.log(response); // print in console
-        console.log("Token Received", response.data.token); // print token in console
-
-        const token = response.data.token; // save the token
-        localStorage.setItem("SM_Token", token); // storage it
-        localStorage.setItem("currentUser", JSON.stringify(response.data.user)); // storage the user info
-        // After Login
-        if (token != null) {
-          if (modal) modal.style.display = "none";
-          showToast();
-          setupUI();
-        }
-      })
-      .catch((error) => {
-        alert(error);
-      });
-    console.log(`Username: ${username}, Password: ${password}`);
   }
-
-  // Login Toast
-  function showToast() {
-    var x = document.getElementById("snackbar");
-    if (!x) return;
-    x.className = "show";
-    setTimeout(function () {
-      x.className = x.className.replace("show", "");
-    }, 3000);
-}
-  
-function getCurrentUser() {
-  let user = null;
-  const storageUser = localStorage.getItem("currentUser");
-  if (storageUser != null) {
-    user = JSON.parse(storageUser);
-  }
-  return user;
 }
 
-// Logout
 function logout() {
   localStorage.removeItem("SM_Token");
   localStorage.removeItem("currentUser");
-  alert(`User Logout Successfully`);
   setupUI();
+  window.location.reload();
 }
 
-// Export functions to global scope in case HTML uses onclick attributes
-window.loginBtnClicked = loginBtnClicked;
-window.logout = logout;
-setupUI();
+// --- Post Logic ---
+function getPost() {
+  axios.get(`${API_URL}/posts/${postId}`)
+    .then(response => {
+      const post = response.data.data;
+      const author = post.author;
+      const comments = post.comments;
 
-// Register
+      document.getElementById("username-span").innerText = author.username + "@";
+
+      let commentsHtml = ``;
+      comments.forEach(comment => {
+        commentsHtml += `
+                    <div class="comment-card">
+                        <div class="comment-header">
+                            <img src="${comment.author.profile_image}" alt="avatar" class="comment-avatar" onerror="this.src='profile-pics/default-avatar.png'">
+                            <b style="color: var(--text-main);">${comment.author.username}</b>
+                        </div>
+                        <div class="comment-body">
+                            ${comment.body}
+                        </div>
+                    </div>
+                `;
+      });
+
+      const token = localStorage.getItem("SM_Token");
+      const addCommentSection = token ? `
+                <div style="padding: 24px; border-top: 1px solid var(--glass-border);">
+                    <div class="inputs" style="flex-direction: row; align-items: center; gap: 12px;">
+                        <input id="comment-input" type="text" placeholder="اكتب تعليقك هنا..." style="flex: 1;">
+                        <button onclick="createCommentClicked()" style="margin: 0; padding: 12px 24px;">إرسال</button>
+                    </div>
+                </div>
+            ` : '';
+
+      let imageHeader = "";
+      if (post.image && typeof post.image === "string" && post.image !== "") {
+        imageHeader = `
+                    <div class="card-header">
+                        <img src="${post.image}" alt="cover">
+                        <h6>${post.created_at}</h6>
+                    </div>
+                `;
+      }
+
+      const postContent = `
+                <div class="square">
+                    ${imageHeader}
+                    <div class="user-info">
+                        <img src="${author.profile_image}" alt="avatar" class="avatar" onerror="this.src='profile-pics/default-avatar.png'">
+                        <h3>${author.username}</h3>
+                    </div>
+                    <div class="h1">${post.title || ""}</div>
+                    <p>${post.body}</p>
+                    
+                    <div id="comments">
+                        <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; margin-bottom: 16px;">التعليقات (${post.comments_count})</h2>
+                        ${commentsHtml}
+                    </div>
+                    
+                    ${addCommentSection}
+                </div>
+            `;
+      document.getElementById("post").innerHTML = postContent;
+    })
+    .catch(err => console.error(err));
+}
+
+function createCommentClicked() {
+  const body = document.getElementById("comment-input").value;
+  const token = localStorage.getItem("SM_Token");
+
+  axios.post(`${API_URL}/posts/${postId}/comments`, { body }, {
+    headers: { authorization: `Bearer ${token}` }
+  })
+    .then(() => {
+      getPost();
+    })
+    .catch(err => alert(err.response?.data?.message || err.message));
+}
+
+// --- Modals (Shared Logic) ---
+function setupModals() {
+  const loginBtn = document.getElementById("loginBtn");
+  const registerBtn = document.getElementById("registerBtn");
+  const closeLogin = document.querySelector(".closeLogin");
+  const closeRegister = document.getElementById("closeRegister");
+
+  if (loginBtn) loginBtn.onclick = () => loginModal.style.display = "block";
+  if (registerBtn) registerBtn.onclick = () => registerModal.style.display = "block";
+
+  [closeLogin, closeRegister].forEach(btn => {
+    if (btn) btn.onclick = () => {
+      loginModal.style.display = "none";
+      registerModal.style.display = "none";
+    };
+  });
+
+  window.onclick = (e) => {
+    if (e.target == loginModal) loginModal.style.display = "none";
+    if (e.target == registerModal) registerModal.style.display = "none";
+  };
+}
+
+function loginBtnClicked() {
+  const username = document.getElementById("usernameInput").value;
+  const password = document.getElementById("passwordInput").value;
+  axios.post(`${API_URL}/login`, { username, password })
+    .then(response => {
+      localStorage.setItem("SM_Token", response.data.token);
+      localStorage.setItem("currentUser", JSON.stringify(response.data.user));
+      location.reload();
+    })
+    .catch(err => alert(err.response?.data?.message || err.message));
+}
+
 function registerBtnClicked() {
-  const nickname = document.getElementById("nickNameInput").value;
+  const name = document.getElementById("nickNameInput").value;
   const username = document.getElementById("usernameInputRegister").value;
   const password = document.getElementById("passwordInputRegister").value;
-  const profileImage = document.getElementById("register-image-input").files[0];
-
-  let formData = new FormData();
-  formData.append("name", nickname);
+  const image = document.getElementById("register-image-input").files[0];
+  const formData = new FormData();
+  formData.append("name", name);
   formData.append("username", username);
   formData.append("password", password);
-  formData.append("image", profileImage);
-
-  const headers = {
-    "Content-Type": "multipart/form-data",
-  };
-
-  axios
-    .post(`${API_URL}/register`, formData, {
-      headers: headers,
+  if (image) formData.append("image", image);
+  axios.post(`${API_URL}/register`, formData)
+    .then(response => {
+      localStorage.setItem("SM_Token", response.data.token);
+      localStorage.setItem("currentUser", JSON.stringify(response.data.user));
+      location.reload();
     })
-    .then((response) => {
-      const token = response.data.token; // <- خطوتان: أخذنا التوكن من الرد ووضعناه في متغير
-      localStorage.setItem("SM_Token", token); // خزن التوكن
-      localStorage.setItem("currentUser", JSON.stringify(response.data.user)); // خزن بيانات المستخدم
-
-      if (token != null) {
-        if (reModal) reModal.style.display = "none";
-        showRegisterToast();
-        alert(
-          "حياك, تم انشاء حسابك في فيديور \n حدث الصفحة علشان تقدر تكمل التصفح."
-        );
-        // setupUI();
-      } else {
-        alert("Registration succeeded but token not received.");
-      }
-    })
-    .catch((error) => {
-      const msg =
-        error.response?.data?.message || error.message || "Registration failed";
-      alert(msg);
-    });
-
-  console.log(nickname, username, password);
+    .catch(err => alert(err.response?.data?.message || err.message));
 }
 
-// Register Toast
-function showRegisterToast() {
-  var x = document.getElementById("registerSnackbar");
-  if (!x) return;
-  x.className = "show";
-  setTimeout(function () {
-    x.className = x.className.replace("show", "");
-  }, 3000);
-}
-
-  function setupUI() {
-    const token = localStorage.getItem("SM_Token");
-    const loggedDiv = document.getElementById("authBtns");
-    const logoutDiv = document.getElementById("logout-div");
-    const navUsername = document.getElementById("nav-username");
-
-    if (!loggedDiv || !logoutDiv) return;
-
-    if (token == null) {
-      // not logged in
-      loggedDiv.style.visibility = "visible";
-      logoutDiv.style.setProperty("display", "none", "important");
-    } else {
-      // logged in
-      loggedDiv.style.setProperty("display", "none", "important");
-      logoutDiv.style.visibility = "visible";
-
-      const user = getCurrentUser();
-      document.getElementById("nav-username").innerHTML = `${user.username}@`;
-      document.getElementById("nav-user-image").src = user.profile_image;
-    }
-  }
-
+// Init
+document.addEventListener("DOMContentLoaded", () => {
+  setupNav();
   setupUI();
+  getPost();
+  setupModals();
+});
+
+window.logout = logout;
+window.createCommentClicked = createCommentClicked;
+window.loginBtnClicked = loginBtnClicked;
+window.registerBtnClicked = registerBtnClicked;

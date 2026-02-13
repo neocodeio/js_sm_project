@@ -1,200 +1,144 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vedioor | الصفحة الرئيسية</title>
   <link rel="stylesheet" href="CSS/styles.css">
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <style>
-    @font-face {
-    font-family: 'MyCustomFont';
-    src: url('ManchetteFine/ManchetteFine-Black.ttf');
-  }
 
-  *{
-    font-family: 'MyCustomFont';
-  }
-  </style>
-  <title>الصفحة الرئيسية</title>
 </head>
 
-<div>
-<nav class="navbar" role="navigation" aria-label="Main navigation">
-  <div class="container nav-container">
-    <div class="logo" aria-hidden="false">
-      <span class="logo-text">فيديور</span>
-    </div>
-    <ul class="nav-links" id="navLinks">
-      <li><a href="home.html" class="nav-link">الرئيسية
-      </a></li>
-      <li><a href="profile.html" class="nav-link">الفروفايل
-      </a></li>
-    
-    <!-- FOR NON-LOGGED USER -->
-     <li>
-    <div class="logo-btns" id="authBtns">
-      <a id="loginBtn" class="auth-btn" style="color: #7857ff;">تسجيل دخول</a>
-      <a id="registerBtn" class="auth-btn" style="color: #7857ff;">انشاء حساب</a>
-    </div>
-    </li>
-    <!-- //FOR NON-LOGGED USER// -->
+<body>
 
-    <!-- FOR LOGGED USER -->
-    <li>
-     <div id="logout-div">
-      <b style="margin-left: 5px; color: #7857ff;" id="nav-username">aminSaif230@</b>
-      <img id="nav-user-image" src="profile-pics/default-avatar.png" alt="default-avatar" style="border-radius: 100%; width: 40px; height: 40px; vertical-align: middle; margin-left: 10px;">
-      <a id="logout-btn" onclick="logout()" class="auth-btn" style="background-color: red; color: white;">تسجيل خروج</a>
-    </div>
-    </li>
-    <!-- //FOR LOGGED USER// -->
-  </ul>
-    <!-- Hamburger -->
-    <button class="hamburger" id="hamburger" aria-expanded="false" aria-controls="navLinks">
-      <span class="hamburger-icon">&#9776;</span>
-      <span class="sr-only">Toggle menu</span>
-    </button>
-  </div>
-</nav>
-<br><br><br><br>
+  <nav class="navbar" role="navigation" aria-label="Main navigation">
+    <div class="nav-content">
+      <a href="home.html" class="logo">
+        <span class="logo-text">فيديور</span>
+      </a>
 
-<!-- Posts -->
-<center>
-  <div>
-    <div class="post-container">
-      <div id="posts">
-        <div class="square">
-          <div class="card-header">
-            <img src="https://images.unsplash.com/photo-1504610926078-a1611febcad3?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=e1c8fe0c9197d66232511525bfd1cc82&auto=format&fit=crop&w=1100&q=80" alt="cover">
-            <h6>2 min ago</h6>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="home.html" class="nav-link">الرئيسية</a></li>
+        <li><a href="profile.html" class="nav-link">الملف الشخصي</a></li>
+
+        <!-- Guest Users -->
+        <li id="guest-nav-items">
+          <div class="logo-btns" id="authBtns">
+            <a id="loginBtn" class="auth-btn">تسجيل دخول</a>
+            <a id="registerBtn" class="auth-btn">انشاء حساب</a>
           </div>
+        </li>
 
-          <div class="user-info">
-            <img src="profile-pics/default-avatar.png" alt="user avatar" class="avatar">
-            <h3>@username</h3>
+        <!-- Logged Users -->
+        <li id="logged-nav-items" style="display: none;">
+          <div id="logout-div" style="display: flex; align-items: center; gap: 12px;">
+            <b id="nav-username" style="color: var(--primary);"></b>
+            <img id="nav-user-image" src="profile-pics/default-avatar.png" alt="User Avatar" class="avatar"
+              style="width: 36px; height: 36px;">
+            <a id="logout-btn" onclick="logout()" class="auth-btn">خروج</a>
           </div>
+        </li>
+      </ul>
 
-          <div class="h1">Lorem ipsum dolor sit amet.</div>
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Sapiente deleniti odit voluptatibus reprehenderit quo earum.
-          </p>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span class="hamburger-icon">&#9776;</span>
+      </button>
+    </div>
+  </nav>
 
-          <div class="lowerPart">
-            <div class="meta-left">
-              <svg class="comment-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true" focusable="false">
-                <path d="M15.2141 5.98239L16.6158 4.58063C17.39 3.80646 18.6452 3.80646 19.4194 4.58063C20.1935 5.3548 20.1935 6.60998 19.4194 7.38415L18.0176 8.78591M15.2141 5.98239L6.98023 14.2163C5.93493 15.2616 5.41226 15.7842 5.05637 16.4211C4.70047 17.058 4.3424 18.5619 4 20C5.43809 19.6576 6.94199 19.2995 7.57889 18.9436C8.21579 18.5877 8.73844 18.0651 9.78375 17.0198L18.0176 8.78591M15.2141 5.98239L18.0176 8.78591" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                <path d="M11 20H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-              </svg>
-              <span class="comment-text">(3) Comments</span>
-            </div>
+  <main class="post-container">
+    <div id="posts" style="width: 100%;">
+      <!-- Posts will be injected here -->
+      <div class="loader" style="text-align: center; padding: 40px;">جاري تحميل المنشورات...</div>
+    </div>
+  </main>
 
-            <!-- <div class="meta-right tags" aria-label="post tags">
-              <button class="tag">Programming</button>
-              <button class="tag">JavaScript</button>
-              <button class="tag">UI/UX</button>
-            </div> -->
-          </div>
-        </div>
+  <!-- Modals -->
+
+  <!-- Login Modal -->
+  <div id="myModal" class="modal">
+    <div class="modal-content">
+      <span class="close closeLogin">&times;</span>
+      <h2>تسجيل دخول</h2>
+      <div class="inputs">
+        <label for="usernameInput">اسم المستخدم</label>
+        <input type="text" id="usernameInput" placeholder="ادخل اسم المستخدم">
+
+        <label for="passwordInput">كلمة المرور</label>
+        <input type="password" id="passwordInput" placeholder="*******">
+
+        <button onclick="loginBtnClicked()">دخول</button>
       </div>
     </div>
   </div>
-</center>
-<!-- Posts -->
 
+  <!-- Register Modal -->
+  <div id="reModal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="closeRegister">&times;</span>
+      <h2>انشاء حساب</h2>
+      <div class="inputs">
+        <label for="nickNameInput">الاسم المستعار</label>
+        <input type="text" id="nickNameInput" placeholder="علي محمد">
 
-<div id="myModal" class="modal">
-  <!-- Modal content -->
-   <br>
-  <div class="modal-content">
-    <span id="closeLogin" class="close" style="font-size: 19px;">X</span>
-    <h2>تسجيل دخول</h2>
-    <div class="inputs">
-      <label>اسم المستخدم:</label><br>
-      <input type="text" placeholder="amin123" id="usernameInput" value="zxc"><br>
-      <br>
-      <label>الباسوورد:</label><br>
-      <input type="password" placeholder="*******" id="passwordInput" value="zxc123"><br><br>
+        <label for="usernameInputRegister">اسم المستخدم</label>
+        <input type="text" id="usernameInputRegister" placeholder="@amin123">
 
-      <center>
-      <button onclick="loginBtnClicked()" id="loginBtnClicked" type="submit">دخول</button>
-      </center>
+        <label for="passwordInputRegister">كلمة المرور</label>
+        <input type="password" id="passwordInputRegister" placeholder="*******">
+
+        <label for="register-image-input">الصورة الشخصية</label>
+        <input type="file" id="register-image-input">
+
+        <button onclick="registerBtnClicked()">انشاء حساب</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Register -->
-<div id="reModal" class="modal">
-  <!-- Modal content -->
-   <br>
-  <div class="modal-content">
-    <span id="closeRegister" class="close" style="font-size: 19px;">X</span>
-    <h2>انشاء حساب</h2>
-    <div class="inputs">
-      <label>وش ينادوك:</label><br>
-      <input type="text" id="nickNameInput" placeholder="علي محمد" value="امين فيصل"><br>
-      <br>
+  <!-- Add Post Modal -->
+  <div id="postModal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="closePost">&times;</span>
+      <h2>وش في بالك؟</h2>
+      <div class="inputs">
+        <label for="post-title-input">العنوان</label>
+        <input type="text" id="post-title-input" placeholder="عنوان المنشور">
 
-      <label>اسم المستخدم:</label><br>
-      <input type="text" id="usernameInputRegister" placeholder="@amin123" value="aminSaif"><br>
-      <br>
+        <label for="post-body-input">المحتوى</label>
+        <textarea id="post-body-input" rows="4" placeholder="اكتب موضوعك هنا..."></textarea>
 
-      <label>الباسوورد:</label><br>
-      <input type="password" id="passwordInputRegister" placeholder="*******" value="Asd123@"><br><br>
+        <label for="post-image-input">صورة</label>
+        <input type="file" id="post-image-input">
 
-      <label>الصورة الشخصية:</label><br>
-      <input type="file" id="register-image-input" style="width: 100%"><br><br>
-
-      <center>
-      <button style="border: none; font-size: 19px; background-color: #7857ff; padding: 3px 25%; color: #f0f0ff; border-radius: 14px;" onclick="registerBtnClicked()">انشاء</button>
-      </center>
+        <button onclick="createNewPostClicked()">انشر الـآن</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Login Toast -->
-<div id="snackbar">
-  حياك في فيديور
-  <svg style="vertical-align: middle;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" color="#f0f0ff" fill="none" stroke="#f0f0ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M5 14L8.5 17.5L19 6.5" />
-</svg>
-</div>
-
-<!-- Register Toast -->
-<div id="registerSnackbar">
-  <!-- تم انشاء حسابك في فيديور -->
-  <svg style="vertical-align: middle;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" color="#f0f0ff" fill="none" stroke="#f0f0ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M5 14L8.5 17.5L19 6.5" />
-</svg>
-</div>
-
-<!-- Add Post Button -->
-<button class="floating-add-btn" aria-label="إضافة" id="add-btn">
-  +
-</button>
-
-<!-- Post Model -->
- <div id="postModal" class="modal">
-  <!-- Modal content -->
-   <br>
-  <div class="modal-content">
-    <span id="closePost" class="close" style="font-size: 19px;">X</span>
-    <h2>وش في بالك</h2>
-    <div class="inputs">
-      <label>العنوان:</label><br>
-      <input type="text" placeholder="البرمجة" id="post-title-input" style="width: 100%" value="البرمجة"><br><br>
-
-      <label>موضوعك:</label><br>
-      <textarea id="post-body-input" placeholder="البرمجة ضد الذكاء الاصطناعي" style="border: none; border-radius: 14px; padding: 6px;" rows="3" cols="35"></textarea><br><br>
-
-      <label>صو رة:</label><br>
-      <input type="file" id="post-image-input" style="width: 100%"><br><br>
-
-      <center>
-      <button onclick="createNewPostClicked()" id="newPost" type="submit" style="width: 100%;">انشر</button>
-      </center>
-    </div>
+  <!-- Toasts -->
+  <div id="snackbar">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+      <polyline points="22 4 12 14.01 9 11.01"></polyline>
+    </svg>
+    <span>أهلاً بك مجدداً!</span>
   </div>
-</div>
-<script src="JS/main.js"></script>
+
+  <div id="registerSnackbar">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+      <polyline points="22 4 12 14.01 9 11.01"></polyline>
+    </svg>
+    <span>تم إنشاء الحساب بنجاح!</span>
+  </div>
+
+  <!-- Floating FAB -->
+  <button class="floating-add-btn" aria-label="أضف منشور" id="add-btn" style="display: none;">
+    +
+  </button>
+
+  <script src="JS/main.js"></script>
 </body>
+
 </html>
