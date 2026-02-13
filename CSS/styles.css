@@ -1,0 +1,535 @@
+/* @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@100;200;300;400;500;600;700&display=swap'); */
+@font-face {
+  font-family: 'Fonty';
+  src: url('ManchetteFine/ManchetteFine-Black.ttf');
+}
+
+/* تنسيقات عامة */
+:root {
+    --primary-color: #7857ff; /* لون أزرق عصري */
+    --text-color: #ffffff;
+    --breakpoint: 768px;
+    --transition: all 0.3s ease;
+}
+
+* {
+    box-sizing: border-box;
+    /* font-family: "IBM Plex Sans Arabic", sans-serif; */
+    font-family: 'Fonty';
+    margin: 0;
+    padding: 0;
+    scroll-behavior: smooth;
+}
+
+body{
+  background-color: #f0f0ff;
+}
+
+ul { padding: 0; margin: 0; }
+li { list-style: none; }
+
+.navbar {
+  background: #0f172a;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+  padding: 14px 18px;
+  position: sticky;
+  font-family: 'Fonty';
+  top: 12px;
+  margin: 18px 15px;
+  border-radius: 40px;
+  z-index: 1000;
+}
+
+.nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* Logo */
+.logo {
+  display: flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: 30px;
+  background: #7857ff;
+}
+
+.logo-text {
+  color: #f0f0ff;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+/* Nav links */
+.nav-links {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #fbfbff;
+  font-size: 18px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Auth buttons (desktop) */
+.logo-btns {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.auth-btn {
+  color: #0f172a;
+  background-color: #b7b5fe;
+  text-decoration: none;
+  border-radius: 30px;
+  font-size: 16px;
+  padding: 8px 16px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* Hamburger */
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.hamburger:focus { outline: 2px solid rgba(255,255,255,0.6); border-radius: 8px; }
+
+/* small-screen menu (hidden by default) */
+.nav-links.mobile {
+  position: absolute;
+  right: 12px;
+  top: calc(100% + 12px);
+  background: #fff;
+  color: #0f172a;
+  width: 220px;
+  padding: 18px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+  flex-direction: column;
+  gap: 12px;
+  transform-origin: top right;
+  transform: scale(0.95);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 180ms ease, opacity 180ms ease;
+  border: 1px solid #674fe5;
+}
+
+/* when open */
+.nav-links.mobile.open {
+  transform: scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* items in mobile menu appear full-width */
+.nav-links.mobile .nav-link,
+.nav-links.mobile .auth-btn {
+  color: #0f172a;
+  background: transparent;
+  padding: 8px 6px;
+  width: 100%;
+  border-radius: 8px;
+  display: block;
+  text-align: left;
+}
+
+/* accessibility helper */
+.sr-only {
+  position: absolute !important;
+  height: 1px; width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
+}
+
+/* responsive rules */
+@media (max-width: 768px) {
+
+  /* on small screens hide desktop auth buttons & show hamburger */
+  .logo-btns { display: none; }
+  .hamburger { display: block; }
+
+  /* hide desktop nav-links; we will use the mobile menu instead */
+  .nav-links { display: none; }
+
+  /* when JS converts nav-links to mobile variant, class .mobile used */
+  .nav-links.mobile { display: flex; }
+}
+
+/* small polish: ensure on large screens mobile classes don't break layout */
+@media (min-width: 769px) {
+  .nav-links.mobile { display: none !important; }
+}
+
+
+.post-container {
+  display: block;
+  justify-content: center;
+  align-items: center;
+}
+
+/* الكارد */
+.square {
+  width: 520px;            /* حجم الكارد */
+  background: #f7f7ff;
+  border-radius: 50px;
+  border: 1px solid #b7b5fe;
+  box-shadow: 0 18px 40px rgba(13,16,30,0.06);
+  overflow: hidden;
+  display: block;
+  margin-bottom: 40px;
+}
+
+/* هيدر الصورة (مربع علوي مقصوص) */
+.card-header {
+  width: 100%;
+  /* height: 260px;           ارتفاع الهيدر */
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 18px 40px rgba(13,16,30,0.06);
+}
+
+/* صورة الهيدر فقط - تناسب كامل الصندوق */
+.card-header img {
+  width: 100%;
+  height: fit-content;
+  object-fit: cover;       /* يضمن أن الصورة تغطي المساحة بدون تشوه */
+  display: block;
+  box-shadow: 0 18px 40px rgba(13,16,30,0.09);
+}
+
+.card-header h6 {
+  position: absolute;
+  bottom: 12px;
+  left: 16px;
+  margin: 0;
+  font-weight: 500;
+  padding: 6px 10px;
+  background: rgba(0,0,0,0.55);
+  color: #fff;
+  font-size: 13px;
+  border-radius: 8px;
+  backdrop-filter: blur(4px);
+}
+
+/* محتوى الكارد */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 24px 6px 24px;
+}
+
+.avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 2px solid #7857ff;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.user-info h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.h1 {
+  padding: 8px 24px 0 24px;
+  margin: 0;
+  text-align: left;
+  color: #0f172a;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+p {
+  margin: 8px 24px 18px 24px;
+  color: lightslategray;
+  font-size: 13px;
+  line-height: 1.6;
+  text-align: left;
+}
+
+/* lowerPart (comments + tags) */
+.lowerPart{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 20px 20px 20px;
+  border-bottom: 1px solid rgba(15,23,42,0.03);
+  flex-wrap: nowrap;
+}
+
+/* جهة التعليقات */
+.meta-left {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.comment-icon {
+  width: 18px;
+  height: 18px;
+  vertical-align: middle;
+}
+
+.comment-text {
+  font-size: 13px;
+  color: #0f172a;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* الـ tags (chips) */
+.tags {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.tag {
+  border: none;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(120,87,255,0.12), rgba(120,87,255,0.06));
+  color: #4b3fb0;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 6px 14px rgba(120,87,255,0.06);
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease;
+  white-space: nowrap;
+}
+
+.tag:active,
+.tag:focus {
+  transform: translateY(1px);
+  outline: none;
+}
+
+/* responsive: on small screens stack vertically */
+@media (max-width: 560px) {
+  .square { width: calc(100% - 32px); border-radius: 16px; }
+  .card-header img { height: 160px; }
+  .lowerPart {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .meta-left { justify-content: flex-start; }
+  .tags { justify-content: flex-start; }
+}
+
+/* قسم الأزرار والإجراءات */
+.actions {
+  padding: 0 24px 22px 24px;
+  display: flex;
+  align-items: center;
+}
+
+/* الزر */
+.button {
+  background-color: #7857ff;
+  color: white;
+  height: 38px;
+  padding: 0 18px;
+  border-radius: 999px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  box-shadow: 0 6px 18px rgba(120,87,255,0.14);
+}
+
+/* تأثير hover للكارد */
+.square:hover {
+  transform: translateY(-6px);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+  box-shadow: 0 24px 60px rgba(13,16,30,0.12);
+}
+
+/* تجاوب بسيط لو الصفحة أصغر */
+@media (max-width: 560px) {
+  .square { width: 92%; }
+  .card-header { height: 200px; }
+  .avatar { width: 36px; height: 36px; }
+}
+
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: #f0f0ff;
+  margin: auto;
+  padding: 25px;
+  border: 1px solid lightgrey;
+  width: 20%;
+  border-radius: 40px;
+}
+
+.modal-content h2{
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.modal-content .inputs label{
+  text-align: left;
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.modal-content .inputs input{
+  border: none;
+  border-radius: 14px;
+  padding: 6px;
+  vertical-align: middle;
+}
+
+.modal-content .inputs button{
+  border: none;
+  font-size: 19px;
+  background-color: #7857ff;
+  padding: 3px 40%;
+  color: #f0f0ff;
+  border-radius: 14px;
+}
+
+/* The Close Button */
+.close {
+  color: #0f172a;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #7857ff;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Toast */
+#snackbar {
+  visibility: hidden; /* Hidden by default. Visible on click */
+  min-width: 250px; /* Set a default minimum width */
+  margin-left: -125px; /* Divide value of min-width by 2 */
+  background-color: #7857ff; /* Black background color */
+  color: #fff; /* White text color */
+  text-align: center; /* Centered text */
+  border-radius: 2px; /* Rounded borders */
+  padding: 13px 20px; /* Padding */
+  position: fixed; /* Sit on top of the screen */
+  z-index: 1; /* Add a z-index if needed */
+  left: 50%; /* Center the snackbar */
+  bottom: 30px; /* 30px from the bottom */
+  border-radius: 25px;
+  font-size: 18px;
+}
+
+/* Show the snackbar when clicking on a button (class added with JavaScript) */
+#snackbar.show {
+  visibility: visible; /* Show the snackbar */
+  /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+  However, delay the fade out process for 2.5 seconds */
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+/* Animations to fade the snackbar in and out */
+@-webkit-keyframes fadein {
+  from {bottom: 0; opacity: 0;}
+  to {bottom: 30px; opacity: 1;}
+}
+
+@keyframes fadein {
+  from {bottom: 0; opacity: 0;}
+  to {bottom: 30px; opacity: 1;}
+}
+
+@-webkit-keyframes fadeout {
+  from {bottom: 30px; opacity: 1;}
+  to {bottom: 0; opacity: 0;}
+}
+
+@keyframes fadeout {
+  from {bottom: 30px; opacity: 1;}
+  to {bottom: 0; opacity: 0;}
+}
+
+/* Floating Add Button */
+.floating-add-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 60px;
+  height: 60px;
+  border-radius: 30%;
+  background-color: #7857ff;
+  color: #ffffff;
+  border: none;
+  font-size: 36px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(120, 87, 255, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Hover effect */
+.floating-add-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 30px rgba(120, 87, 255, 0.45);
+}
+
+/* Active (click) effect */
+.floating-add-btn:active {
+  transform: scale(0.95);
+}
