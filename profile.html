@@ -7,7 +7,6 @@
     <title>Vedioor | الملف الشخصي</title>
     <link rel="stylesheet" href="CSS/styles.css">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
 </head>
 
 <body>
@@ -31,7 +30,7 @@
 
                 <li id="logged-nav-items" style="display: none;">
                     <div id="logout-div" style="display: flex; align-items: center; gap: 12px;">
-                        <b id="nav-username" style="color: var(--primary);"></b>
+                        <b id="nav-username"></b>
                         <img id="nav-user-image" src="profile-pics/default-avatar.png" alt="User Avatar" class="avatar"
                             style="width: 36px; height: 36px;">
                         <a id="logout-btn" onclick="logout()" class="auth-btn">خروج</a>
@@ -47,64 +46,86 @@
 
     <main>
         <div class="profile-header">
-            <img id="header-user-image" src="profile-pics/default-avatar.png" alt="Profile" class="profile-avatar">
+            <div class="profile-img-container">
+                <img id="header-user-image" src="profile-pics/default-avatar.png" alt="Profile">
+                <div class="edit-img-overlay"
+                    onclick="document.getElementById('edit-profile-modal').style.display='block'">
+                    <span>تعديل</span>
+                </div>
+            </div>
             <div class="profile-info">
                 <h1 id="header-name">اسم المستخدم</h1>
-                <span id="header-username">@username</span>
-                <div id="user-stats" style="display: flex; gap: 24px; margin-top: 16px;">
+                <p id="header-username" style="padding:0; margin-bottom: 8px;">@username</p>
+                <button class="auth-btn" onclick="document.getElementById('edit-profile-modal').style.display='block'"
+                    style="margin-bottom: 16px;">تعديل الملف الشخصي</button>
+                <div id="user-stats" style="display: flex; gap: 32px; justify-content: center; margin-top: 8px;">
                     <div>
-                        <span id="posts-count" style="color: var(--primary); font-weight: bold;">0</span>
-                        <p style="margin: 0; padding: 0; font-size: 0.8rem;">منشور</p>
+                        <span id="posts-count" style="font-size: 1.25rem; font-weight: 800;">0</span>
+                        <p style="margin: 0; padding: 0; font-size: 0.8rem; color: var(--text-muted);">منشور</p>
                     </div>
                     <div>
-                        <span id="comments-count" style="color: var(--primary); font-weight: bold;">0</span>
-                        <p style="margin: 0; padding: 0; font-size: 0.8rem;">تعليق</p>
+                        <span id="comments-count" style="font-size: 1.25rem; font-weight: 800;">0</span>
+                        <p style="margin: 0; padding: 0; font-size: 0.8rem; color: var(--text-muted);">تعليق</p>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="post-container">
-            <h2 style="font-family: 'Space Grotesk', sans-serif; align-self: flex-start; margin-bottom: 20px;">منشوراتي
-            </h2>
+            <h2 style="margin-bottom: 24px;">منشوراتي</h2>
             <div id="user-posts" style="width: 100%;">
-                <!-- User posts will be injected here -->
-                <div class="loader" style="text-align: center; padding: 40px;">جاري تحميل منشوراتك...</div>
+                <!-- Skeletons will go here initially -->
             </div>
         </div>
     </main>
 
-    <!-- Modals & Toasts (Mirrored from home.html for consistency) -->
-    <div id="myModal" class="modal">
+    <!-- Modals -->
+    <div id="edit-profile-modal" class="modal">
         <div class="modal-content">
-            <span class="close closeLogin">&times;</span>
-            <h2>تسجيل دخول</h2>
+            <span class="close"
+                onclick="document.getElementById('edit-profile-modal').style.display='none'">&times;</span>
+            <h2>تعديل الحساب</h2>
             <div class="inputs">
-                <input type="text" id="usernameInput" placeholder="اسم المستخدم">
-                <input type="password" id="passwordInput" placeholder="كلمة المرور">
-                <button onclick="loginBtnClicked()">دخول</button>
+                <label>الاسم</label>
+                <input type="text" id="edit-name-input">
+                <label>الصورة الشخصية</label>
+                <input type="file" id="edit-profile-image-input">
+                <button onclick="updateProfileClicked()">تحديث البيانات</button>
             </div>
         </div>
     </div>
 
-    <div id="reModal" class="modal">
+    <!-- Edit Post Modal -->
+    <div id="editPostModal" class="modal">
         <div class="modal-content">
-            <span class="close" id="closeRegister">&times;</span>
-            <h2>انشاء حساب</h2>
+            <span class="close" id="closeEditPost">&times;</span>
+            <h2>تعديل المنشور</h2>
+            <input type="hidden" id="edit-post-id-input">
             <div class="inputs">
-                <input type="text" id="nickNameInput" placeholder="الاسم المستعار">
-                <input type="text" id="usernameInputRegister" placeholder="اسم المستخدم">
-                <input type="password" id="passwordInputRegister" placeholder="كلمة المرور">
-                <input type="file" id="register-image-input">
-                <button onclick="registerBtnClicked()">انشاء</button>
+                <label for="edit-post-title-input">العنوان</label>
+                <input type="text" id="edit-post-title-input">
+                <label for="edit-post-body-input">المحتوى</label>
+                <textarea id="edit-post-body-input" rows="4"></textarea>
+                <label for="edit-post-image-input">تغيير الصورة (اختياري)</label>
+                <input type="file" id="edit-post-image-input">
+                <button onclick="updatePostClicked()">حفظ التعديلات</button>
             </div>
         </div>
     </div>
 
-    <div id="snackbar">أهلاً بك مجدداً!</div>
-    <div id="registerSnackbar">تم إنشاء الحساب بنجاح!</div>
+    <div id="deleteModal" class="modal">
+        <div class="modal-content" style="max-width: 320px; text-align: center;">
+            <h3>حذف المنشور؟</h3>
+            <p style="padding: 0; margin-top: 8px;">هل أنت متأكد من حذف هذا المنشور نهائياً؟</p>
+            <input type="hidden" id="delete-post-id-input">
+            <div style="display: flex; gap: 12px; margin-top: 20px;">
+                <button onclick="confirmDeletePost()" style="background: var(--danger); flex: 1;">حذف</button>
+                <button onclick="document.getElementById('deleteModal').style.display='none'"
+                    style="background: var(--bg-card); border: 1px solid var(--border-subtle); flex: 1;">إلغاء</button>
+            </div>
+        </div>
+    </div>
 
-    <!-- Add Post Modal -->
     <div id="postModal" class="modal">
         <div class="modal-content">
             <span class="close" id="closePost">&times;</span>
@@ -112,36 +133,32 @@
             <div class="inputs">
                 <label for="post-title-input">العنوان</label>
                 <input type="text" id="post-title-input" placeholder="عنوان المنشور">
-
                 <label for="post-body-input">المحتوى</label>
                 <textarea id="post-body-input" rows="4" placeholder="اكتب موضوعك هنا..."></textarea>
-
                 <label for="post-image-input">صورة</label>
                 <input type="file" id="post-image-input">
-
                 <button onclick="createNewPostClicked()">انشر الـآن</button>
             </div>
         </div>
     </div>
 
-    <!-- Floating FAB -->
-    <button class="floating-add-btn" aria-label="أضف منشور" id="add-btn" style="display: none;">
-        +
-    </button>
+    <button class="floating-add-btn" id="add-btn" style="display: none;">+</button>
 
     <script src="JS/main.js"></script>
     <script>
-        // Profile specific logic
         document.addEventListener("DOMContentLoaded", () => {
             const user = getCurrentUser();
             if (user) {
+                // Update header
                 document.getElementById("header-name").innerText = user.name || user.username;
                 document.getElementById("header-username").innerText = `@${user.username}`;
                 document.getElementById("header-user-image").src = user.profile_image || "profile-pics/default-avatar.png";
                 document.getElementById("posts-count").innerText = user.posts_count || 0;
                 document.getElementById("comments-count").innerText = user.comments_count || 0;
 
-                // Fetch user posts
+                // Set modal inputs
+                document.getElementById("edit-name-input").value = user.name || "";
+
                 getUserPosts(user.id);
             } else {
                 window.location.href = "home.html";
@@ -149,11 +166,16 @@
         });
 
         function getUserPosts(userId) {
+            const container = document.getElementById("user-posts");
+            if (!container) return;
+            container.innerHTML = "";
+            showSkeletons("user-posts", 2);
+
             axios.get(`${API_URL}/users/${userId}/posts`)
                 .then(response => {
+                    hideSkeletons();
                     const posts = response.data.data;
-                    const container = document.getElementById("user-posts");
-                    container.innerHTML = "";
+                    const currentUser = getCurrentUser();
 
                     if (posts.length === 0) {
                         container.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--text-muted);">لا توجد منشورات بعد.</div>`;
@@ -163,16 +185,25 @@
                     posts.forEach(post => {
                         let imageHeader = "";
                         if (post.image && typeof post.image === "string" && post.image !== "") {
-                            imageHeader = `
-                                <div class="card-header">
-                                    <img src="${post.image}" alt="cover">
-                                    <h6>${post.created_at}</h6>
+                            imageHeader = `<div class="card-header"><img src="${post.image}" alt="cover"><h6>${post.created_at}</h6></div>`;
+                        }
+
+                        let actionButtons = "";
+                        if (currentUser && post.author.id == currentUser.id) {
+                            actionButtons = `
+                                <div class="post-actions">
+                                    <button class="action-btn" onclick="editPostClicked(event, ${JSON.stringify(post).replace(/"/g, '&quot;')})">✎</button>
+                                    <button class="action-btn delete" onclick="deletePostClicked(event, ${post.id})">🗑</button>
                                 </div>
                             `;
                         }
 
+                        const likedPosts = JSON.parse(localStorage.getItem("liked_posts")) || [];
+                        const isLiked = likedPosts.includes(post.id);
+
                         const content = `
                         <div class="square" onclick="postClicked(${post.id})" style="cursor: pointer; margin-bottom: 30px;">
+                            ${actionButtons}
                             ${imageHeader}
                             <div class="user-info">
                                 <img src="${post.author.profile_image}" alt="avatar" class="avatar" onerror="this.src='profile-pics/default-avatar.png'">
@@ -182,10 +213,14 @@
                             <p>${post.body}</p>
                             <div class="lowerPart">
                                 <div class="meta-left">
-                                    <svg class="comment-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-12.7 8.19 8.19 0 0 1 4.9 1.5L21 3z"></path>
                                     </svg>
                                     <span>${post.comments_count} تعليق</span>
+                                </div>
+                                <div class="like-btn ${isLiked ? 'active' : ''}" onclick="toggleLike(event, ${post.id})">
+                                    <span>${isLiked ? '❤️' : '♡'}</span>
+                                    <span>${isLiked ? 'أعجبني' : 'إعجاب'}</span>
                                 </div>
                             </div>
                         </div>
@@ -193,7 +228,44 @@
                         container.innerHTML += content;
                     });
                 })
-                .catch(error => alert("Error loading posts: " + error));
+                .catch(err => {
+                    hideSkeletons();
+                    console.error(err);
+                });
+        }
+
+        // Add a function to refresh profile info (like post count)
+        function refreshProfileInfo() {
+            const user = getCurrentUser();
+            if (!user) return;
+            axios.get(`${API_URL}/users/${user.id}`)
+                .then(response => {
+                    const freshUser = response.data.data;
+                    localStorage.setItem("currentUser", JSON.stringify(freshUser));
+                    document.getElementById("posts-count").innerText = freshUser.posts_count || 0;
+                    document.getElementById("comments-count").innerText = freshUser.comments_count || 0;
+                });
+        }
+
+        window.getUserPosts = getUserPosts;
+        window.refreshProfileInfo = refreshProfileInfo;
+
+        function updateProfileClicked() {
+            const name = document.getElementById("edit-name-input").value;
+            const image = document.getElementById("edit-profile-image-input").files[0];
+            const token = localStorage.getItem("SM_Token");
+
+            const formData = new FormData();
+            formData.append("name", name);
+            if (image) formData.append("image", image);
+            formData.append("_method", "put");
+
+            axios.post(`${API_URL}/updateProfile`, formData, {
+                headers: { authorization: `Bearer ${token}` }
+            }).then(response => {
+                localStorage.setItem("currentUser", JSON.stringify(response.data.data));
+                location.reload();
+            }).catch(err => alert(err.response?.data?.message || err.message));
         }
     </script>
 </body>

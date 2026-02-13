@@ -116,7 +116,41 @@
     </div>
   </div>
 
-  <!-- Toasts -->
+  <!-- Edit Post Modal -->
+  <div id="editPostModal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="closeEditPost">&times;</span>
+      <h2>تعديل المنشور</h2>
+      <input type="hidden" id="edit-post-id-input">
+      <div class="inputs">
+        <label for="edit-post-title-input">العنوان</label>
+        <input type="text" id="edit-post-title-input">
+
+        <label for="edit-post-body-input">المحتوى</label>
+        <textarea id="edit-post-body-input" rows="4"></textarea>
+
+        <label for="edit-post-image-input">تغيير الصورة (اختياري)</label>
+        <input type="file" id="edit-post-image-input">
+
+        <button onclick="updatePostClicked()">حفظ التعديلات</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal (Optional but good) -->
+  <div id="deleteModal" class="modal">
+    <div class="modal-content" style="max-width: 320px; text-align: center;">
+      <h3>حذف المنشور؟</h3>
+      <p style="padding: 0; margin-top: 8px;">هل أنت متأكد من حذف هذا المنشور نهائياً؟</p>
+      <input type="hidden" id="delete-post-id-input">
+      <div style="display: flex; gap: 12px; margin-top: 20px;">
+        <button onclick="confirmDeletePost()" style="background: var(--danger); flex: 1;">حذف</button>
+        <button onclick="document.getElementById('deleteModal').style.display='none'"
+          style="background: var(--bg-card); border: 1px solid var(--border-subtle); flex: 1;">إلغاء</button>
+      </div>
+    </div>
+  </div>
+
   <div id="snackbar">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
